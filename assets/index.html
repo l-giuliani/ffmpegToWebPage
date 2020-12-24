@@ -1,0 +1,42 @@
+<html>
+  <head>
+    <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+  </head>
+
+  <body>
+    <h3>WebSocket Go</h3>
+    <pre id="output"></pre>
+    <div id="stream-container">
+			<canvas id="videostream" width="1160" height="844" style="border:solid;"></canvas>
+
+		</div>
+
+    <script>
+      url = 'ws://192.168.0.114:8089/ws';
+      c = new WebSocket(url);
+
+      c.onmessage = function(msg){
+        console.log(msg.data)
+        try {
+          // 1. method: draw on canvas
+          var canvas = document.getElementById('videostream');
+          var context = canvas.getContext('2d');
+          var imageObj = new Image();
+          imageObj.src = "data:image/jpeg;base64,"+msg.data;
+          console.log(imageObj.src)
+          imageObj.onload = function(){
+            context.height = imageObj.height;
+            context.width = imageObj.width;
+            context.drawImage(imageObj,0,0,context.width,context.height);
+          }
+          // 2. method: draw as CSS background
+          // $('#videostream').css('background', 'transparent url(data:image/jpeg;base64,'+data+') top left / 100% 100% no-repeat');
+        } catch(e){ console.log("catch") }
+      }
+
+      c.onopen = function(){
+      }
+    </script>
+
+  </body>
+</html>
